@@ -63,15 +63,18 @@ code: |
     quit_solve_problems
   if termination_type == "fired":
     fired_intro
-    fired_misconduct
   
   appeal_reason
   if attachments.there_are_any:
     attachments.gather()
+    if attachments.number_gathered() > 2:
+      set_additional
   request_transrcipt
   appeal_date
   delivery_intro
   employer.name.first
+  employer.address.address
+  delivery_method
   recert_reminder
 
   nav.set_section('section_about')
@@ -217,7 +220,7 @@ question: |
 fields: 
   - no label: hearing_date
     datatype: ThreePartsDate
-    alMax: ${ today().format("yyyy-MM-dd") }
+    alMax: ${ decision_date.format("yyyy-MM-dd") }
 ---
 id: attend hearing
 question: |
@@ -258,6 +261,7 @@ subquestion: |
   * Involuntarily, for example you were fired or the business closed.
 fields:
   - How did your employment end?: termination_type
+    datatype: radio
     choices: 
       - I quit.: quit
       - I was fired.: fired
@@ -286,9 +290,10 @@ subquestion: |
   You also need to show that before you quit, you tried to solve the problems you were having at your job.
 
   For example, you could explain:
-    * If you sent in a formal complaint about working conditions, or
-    * If you went to talk about your work problems with your supervisor and tried to work out a solution.
-    * If you did not do this, you need to explain why.
+
+  * If you sent in a formal complaint about working conditions, or
+  * If you went to talk about your work problems with your supervisor and tried to work out a solution.
+  * If you did not do this, you need to explain why.
 continue button field: quit_solve_problems
 ---
 template: not_misconduct_help 	
@@ -410,12 +415,15 @@ question: |
   ${ ordinal(i).upper()} attachment details
 fields: 
   - Document: attachments[i].name.text 
-    maxlength: 20
+    maxlength: 30
   - Short description: attachments[i].desc
-    maxlength: 20
+    maxlength: 30
   - Did you present this at the referee hearing?: attachments[i].at_hearing
     datatype: yesnoradio
   - Reason why you did not present it at the hearing.:	attachments[i].not_at_hearing_reason
+    datatype: area
+    rows: 3
+    maxlength: 100
     show if:
       variable: attachments[i].at_hearing
       is: False
@@ -436,10 +444,6 @@ fields:
 code: |
   attachments[i].name.text
   attachments[i].complete = True
----
-code: |
-  if attachments.number_gathered() == 3:
-    attachments.there_is_another = False
 ---
 id: request transcript
 question: |
@@ -494,6 +498,11 @@ question: |
 fields: 
   - code: |
       employer.name_fields(person_or_business='unsure')
+---
+id: former eployer address
+question: |
+  Address for ${ employer.name_full()}
+fields:
   - Street address: employer.address.address
     address autocomplete: True
   - Address line 2: employer.address.unit
@@ -504,13 +513,18 @@ fields:
       states_list()
     default: IL
   - ZIP code: employer.address.zip
-  - "How will you deliver the letter and appeal to your former employer?": delivery_method
+---
+id: former employer delivery
+question: |
+  Delivery to ${ employer.name_full()}
+fields:
+  - How will you deliver the letter and appeal to ${ employer.name_full() }?: delivery_method
     datatype: radio
     choices: 
       - Mail: certify
       - Personal delivery: delivery
       - I don't know. I will add this to my form later.: no
-  - "When will you deliver the letter and appeal to your former employer?": delivery_date
+  - When will you deliver the letter and appeal to ${ employer.name_full() }?: delivery_date
     datatype: ThreePartsDate
     alMin: ${ today().format("yyyy-MM-dd") }
     required: False
@@ -604,7 +618,7 @@ subquestion: |
   After you click **Next**, it may take a few moments to finish making your forms.
   
   ###### You do not need to refresh your screen. Hang in there!
-  
+
   [NEWLINE]
 ---
 id: get docs screen
@@ -634,6 +648,11 @@ under: |
 
   ${ action_button_html(interview_url(i="docassemble.ILAO:feedback.yml", easy_form_interview=ilao_easy_form_url, easy_form_title=ilao_easy_form_title, easy_form_page=current_context().question_id, easy_form_variable=current_context().variable, local=False,reset=1), label=':comment: Was this program helpful?', color="#181c36", size="md", new_window=True) }
 ---
+reconsider: True
+code: |
+  additional_attachments.enabled = (attachments.there_are_any and attachments.number_gathered() > 2)
+  set_additional = True
+---
 generic object: ALDocumentBundle
 template: x.get_email_copy
 content: |
@@ -652,11 +671,12 @@ content: |
 ---
 ###################### ATTACHMENTS ##########################
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
+  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal, additional_attachments, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
 ---
 objects:
   - instructions: ALDocument.using(title="Instructions", filename="instructions.pdf", enabled=True, has_addendum=False)
   - notice_of_appeal: ALDocument.using(title=form_name, filename="notice_of_appeal.pdf", enabled=True, has_addendum=False)
+  - additional_attachments: ALDocument.using(title="Aditional Attachments", filename="additional_attachments.pdf", enabled=False, has_addendum=False)
   - cover_letter: ALDocument.using(title="Cover Letter", filename="cover_letter.pdf", enabled=True, has_addendum=False)
 ---
 attachment:
@@ -674,6 +694,13 @@ attachment:
   docx template file: cover_letter.docx
 ---
 attachment:
+  variable name: additional_attachments[i]
+  name: additional_attachments
+  filename: additional_attachments
+  skip undefined: True
+  docx template file: additional_attachments.docx
+---
+attachment:
   - name: notice_of_appeal
     variable name: notice_of_appeal[i]
     filename: notice_of_appeal
@@ -683,12 +710,7 @@ attachment:
     fields:
       - "name": ${ users[0].name_full() }  
       - "appellant": "claimant"
-      - "ssn": |
-          % if users[0].id_or_ssn | length == 4:
-          ${ "XXX-XX-" + int(users[0].id_or_ssn) }
-          % else:
-          ${ int(users[0].id_or_ssn) }
-          % endif
+      - "ssn": ${ int(users[0].id_or_ssn) }
       - "address1": ${ users[0].address.address }
       - "address2": ${ users[0].address.unit }
       - "city": ${ users[0].address.city }
@@ -697,35 +719,30 @@ attachment:
       - "appeal_filed_date": ${ decision_date.format("MM/dd/yyyy") }
       - "docket_number": ${ docket_number }
       - "letter": True
-      - "other": ${ attachments.are_there_any }
+      - "other": ${ attachments.there_are_any }
       - "other_explain": |
-          % if attachments.are_there_any:
-            ${ attachments.name.text }
+          % if attachments.there_are_any:
+            % if attachments.number_gathered() <= 2:
+            ${ attachments }
+            % else:
+            Please see attached list of documents.
+            % endif
           % else:
-          ''
+          ""
           % endif
       - "appeal_reason": |
           ${ "I disagree with the decision for the following reasons: " + appeal_reason }
 
-          % if late_reason:
-            ${ "\n\nMy appeal is late because: " + late_reason }
+          % if defined('late_reason'):
+            % if late_reason:
+              ${ "\n\nMy appeal is late because: " + late_reason }
+            % endif
           % endif
 
           % if attended_hearing == False:
           ${ "\n\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
           % endif
-      # service
       - "service_name": ${ employer.name_full() }
       - "service_address": ${ employer.address.on_one_line() }
       - "service_date": ${ delivery_date.format("MM/dd/yyyy") }
-      - "servedby": ${ delivery_method }
-      
-      # |
-      #     % if delivery_method == "certify":
-      #     "certified" 
-      #     % elif delivery_method == "delivery":
-      #     "delivery"
-      #     % endif 
-      # signature not electronic
-      - "signature_date": ${ request_date.format("MM/dd/yyyy") }
-      
+      - "servedby": ${ "certified" if delivery_method == "certify" else "delivery" if delivery_method == "delivery" else '' }

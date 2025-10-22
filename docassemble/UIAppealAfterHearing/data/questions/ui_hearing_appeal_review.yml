@@ -8,10 +8,10 @@ subquestion: |
 review:
   - note: |
      <h4>Referee hearing</h4>
-  - Edit: received_finding_letter
+  - Edit: received_denial_letter
     button: |
       **UI decision letter from IDES:**
-      ${ word(yesno(received_finding_letter)) }
+      ${ word(yesno(received_denial_letter)) }
   - Edit: decision_date
     button: |
       **Decision date:**
@@ -48,11 +48,6 @@ review:
       % if termination_type == "fired":
         I was fired.
       % endif
-  - Edit: quit_solve_problems
-    button: |
-      **Explain why you quit:**
-      ${ quit_solve_problems }
-    show if: termination_type == "quit"
   - Edit: appeal_reason
     button: |
       **I disagree with the decision for the following reasons:**
@@ -70,6 +65,26 @@ review:
       * ${ doc.name.text }, ${ doc.desc }
       % endfor
     show if: attachments.there_are_any
+  - Edit: employer.name.first
+    button: |
+      **Former employer:**
+
+      ${ employer.name_full()}
+  - Edit: employer.address.address
+    button: |
+      **Address for ${ employer.name_full()}:**
+      ${ employer.address.on_one_line(bare=True) }
+  - Edit: delivery_method
+    button: |
+      **Deliver to ${ employer.name_full() } through:**
+
+      % if delivery_method == 'certify':
+      - Mail
+      % elif delivery_method == 'delivery':
+      - Personal delivery
+      % else:
+      - I don't know. I will add this to my form later.
+      % endif
   - Edit: delivery_date
     button: |
       **Delivery date:**
@@ -109,10 +124,10 @@ event: section_hearing
 question: |
   Referee hearing details
 review:
-  - Edit: received_finding_letter
+  - Edit: received_denial_letter
     button: |
       **UI decision letter from IDES:**
-      ${ word(yesno(received_finding_letter)) }
+      ${ word(yesno(received_denial_letter)) }
   - Edit: decision_date
     button: |
       **Decision date:**
@@ -154,11 +169,6 @@ review:
       % if termination_type == "fired":
         I was fired.
       % endif
-  - Edit: quit_solve_problems
-    button: |
-      **Explain why you quit:**
-      ${ quit_solve_problems }
-    show if: termination_type == "quit"
   - Edit: appeal_reason
     button: |
       **I disagree with the decision for the following reasons:**
@@ -176,6 +186,25 @@ review:
       * ${ doc.name.text }, ${ doc.desc }
       % endfor
     show if: attachments.there_are_any
+  - Edit: employer.name.first
+    button: |
+      **Former employer:**
+
+      ${ employer.name_full()}
+  - Edit: employer.address.address
+    button: |
+      **Address for ${ employer.name_full()}:**
+      ${ employer.address.on_one_line(bare=True) }
+  - Edit: delivery_method
+    button: |
+      **Deliver to ${ employer.name_full() } through:**
+      % if delivery_method == 'certify':
+      - Mail
+      % elif delivery_method == 'delivery':
+      - Personal delivery
+      % else:
+      - I don't know. I will add this to my form later.
+      % endif
   - Edit: delivery_date
     button: |
       **Delivery date:**
