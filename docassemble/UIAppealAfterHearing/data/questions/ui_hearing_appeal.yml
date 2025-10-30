@@ -67,8 +67,11 @@ code: |
   appeal_reason
   if attachments.there_are_any:
     attachments.gather()
-    if attachments.number_gathered() > 2:
-      set_additional
+    hearing_check
+    if ask_attachment_reason:
+      not_at_hearing_reason
+  if attachments.number_gathered() > 2 or len(appeal_reason) > 600:
+    set_additional
   request_transrcipt
   appeal_date
   delivery_intro
@@ -202,17 +205,20 @@ code: |
   decision_diff = date_difference(decision_date, today())
   check_late_appeal = True
 ---
-id: late request
+id: late appeal
 question: |
-  Explain why you are late to file appeal.
+  Explain why you are late to file an appeal
 subquestion: |
-  You have thirty (30) days from the date on the decision to send in your Notice of Appeal. Based on the date of the decision (${ decision_date.format("MM/dd/yyyy") }), your appeal is late. Please explain why:
+  You have thirty (30) days from the date on the decision to send in your Notice of Appeal. Based on the date of the decision (${ decision_date.format("MM/dd/yyyy") }), your appeal is late. For IDES to consider your appeal, you must explain why it is filed late.
 
   Click **Back** if you want to change the date of decision. Or you can click **Next** to make your appeal even though it is late.
 fields: 
   - Explain why your appeal is late: late_reason
     datatype: area
     rows: 5
+    maxlength: 200
+  - note: |
+      **Note:** The form has room for about **200 characters** including spaces.
 ---
 id: referee hearing date
 question: |
@@ -312,13 +318,14 @@ content: |
 ---
 id: fired intro
 question: |
-  Why were you fired?
+  Being fired for misconduct.
 subquestion: |
-  Your employer has to prove that you were fired for ""misconduct."" This means that you were fired because of something you did on purpose that broke a rule or policy.
+  Your employer has to prove that you were fired for "misconduct." This means that you were fired because of something you did on purpose that broke a rule or policy.
 
   To get benefits, you need to show that:
-    * You did not do the acts which your employer says you did, or
-    * Those acts were not misconduct.
+
+  * You did not do the acts which your employer says you did, or 
+  * Those acts were not misconduct.
 
   ${ collapse_template(not_misconduct_help) }  
 
@@ -352,41 +359,48 @@ subquestion: |
 
   **Note:** The form has room for about **1,300 characters** including spaces.
 fields:
+  - raw html: |
+      <span id="areacounter" maxlength="1300">
   - no label: appeal_reason
     input type: area
     rows: 18
     maxlength: 1300
+  - raw html: |
+      </span>
 script: |
   <script>
     $(document).on('daPageLoad', function() {
-      var maxLength = 1300; // This should match the textarea maxlength
-      var textareas = document.querySelectorAll('textarea');
-      textareas.forEach(function (textarea) {
-        var counterId = textarea.id + "_counter";
-        if (document.getElementById(counterId)) return;
+      var parent_el = document.getElementById('areacounter');
+      if (!parent_el) return;
+      var textarea = parent_el.parentNode.querySelector('textarea');
+      if (!textarea) return;
+      var counterId = textarea.id + "_counter";
+      if (document.getElementById(counterId)) return;
+      var maxLength = parseInt(parent_el.getAttribute('maxlength'), 10)
 
-        var counter = document.createElement("div");
-        counter.id = counterId;
-        counter.style.textAlign = "right";
-        counter.style.fontSize = "1em";
-        counter.style.color = "#555";
+      var counter = document.createElement("div");
+      counter.id = counterId;
+      counter.style.textAlign = "right";
+      counter.style.fontSize = "1em";
+      counter.style.color = "#555";
 
-        function updateCounter() {
-          var len = textarea.value.length;
-          counter.textContent = len + "/" + maxLength;
-          if (len > maxLength) {
-            counter.style.fontWeight = "bold";
-            counter.style.color = "#000";
-          } else {
-            counter.style.fontWeight = "normal";
-            counter.style.color = "#555";
-          }
+      // insert the counter immediately below the textarea
+      textarea.parentNode.insertBefore(counter, textarea.nextSibling);
+
+      function updateCounter() {
+        var len = textarea.value ? textarea.value.length : 0;
+        counter.textContent = len + '/' + maxLength;
+        if (len > maxLength) {
+          counter.style.fontWeight = 'bold';
+          counter.style.color = '#000';
+        } else {
+          counter.style.fontWeight = 'normal';
+          counter.style.color = '#555';
         }
+      }
 
-        textarea.parentNode.appendChild(counter);
-        textarea.addEventListener("input", updateCounter);
-        updateCounter();
-      });
+      textarea.addEventListener('input', updateCounter);
+      updateCounter();
     });
   </script>
 ---
@@ -412,7 +426,7 @@ fields:
 ---
 id: additional document details
 question: |
-  ${ ordinal(i).upper()} attachment details
+  ${ capitalize(ordinal(i)) } attachment details
 fields: 
   - Document: attachments[i].name.text 
     maxlength: 30
@@ -420,13 +434,15 @@ fields:
     maxlength: 30
   - Did you present this at the referee hearing?: attachments[i].at_hearing
     datatype: yesnoradio
-  - Reason why you did not present it at the hearing.:	attachments[i].not_at_hearing_reason
+---
+id: reason not presented
+question: |
+   Why didn't you present at hearing.
+fields:
+  - Reason why you did not present it at the hearing.: not_at_hearing_reason
     datatype: area
     rows: 3
     maxlength: 100
-    show if:
-      variable: attachments[i].at_hearing
-      is: False
 ---
 id: any more documents
 question: |
@@ -444,6 +460,14 @@ fields:
 code: |
   attachments[i].name.text
   attachments[i].complete = True
+---
+code: |
+  for el in attachments:
+    if not el.at_hearing:
+      ask_attachment_reason = True
+      break
+    
+  hearing_check = True
 ---
 id: request transcript
 question: |
@@ -650,7 +674,7 @@ under: |
 ---
 reconsider: True
 code: |
-  additional_attachments.enabled = (attachments.there_are_any and attachments.number_gathered() > 2)
+  additional_attachments.enabled = (attachments.there_are_any and attachments.number_gathered() > 2) or len(appeal_reason) > 600
   set_additional = True
 ---
 generic object: ALDocumentBundle
@@ -671,7 +695,11 @@ content: |
 ---
 ###################### ATTACHMENTS ##########################
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal, additional_attachments, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
+  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal_bundle, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
+  - notice_of_appeal_bundle: ALDocumentBundle.using(title=form_name, filename="", enabled=True, elements=[
+        notice_of_appeal,
+        additional_attachments,
+      ])
 ---
 objects:
   - instructions: ALDocument.using(title="Instructions", filename="instructions.pdf", enabled=True, has_addendum=False)
@@ -731,7 +759,11 @@ attachment:
           ""
           % endif
       - "appeal_reason": |
+          % if len(appeal_reason) > 600:
+          Please see attached reason I disagree with the decision.
+          % else:
           ${ "I disagree with the decision for the following reasons: " + appeal_reason }
+          % endif
 
           % if defined('late_reason'):
             % if late_reason:

@@ -65,6 +65,12 @@ review:
       * ${ doc.name.text }, ${ doc.desc }
       % endfor
     show if: attachments.there_are_any
+  - Edit: not_at_hearing_reason
+    button: |
+      **Reason why you did not present it at the hearing:**
+      
+      ${ not_at_hearing_reason } 
+    show if: defined('not_at_hearing_reason') and not_at_hearing_reason
   - Edit: employer.name.first
     button: |
       **Former employer:**
@@ -186,6 +192,12 @@ review:
       * ${ doc.name.text }, ${ doc.desc }
       % endfor
     show if: attachments.there_are_any
+  - Edit: not_at_hearing_reason
+    button: |
+      **Reason why you did not present it at the hearing:**
+
+      ${ not_at_hearing_reason } 
+    show if: defined('not_at_hearing_reason') and not_at_hearing_reason
   - Edit: employer.name.first
     button: |
       **Former employer:**
