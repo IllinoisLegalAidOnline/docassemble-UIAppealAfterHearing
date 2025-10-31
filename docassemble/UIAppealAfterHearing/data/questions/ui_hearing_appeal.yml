@@ -318,7 +318,7 @@ content: |
 ---
 id: fired intro
 question: |
-  Being fired for misconduct.
+  Being fired for misconduct
 subquestion: |
   Your employer has to prove that you were fired for "misconduct." This means that you were fired because of something you did on purpose that broke a rule or policy.
 
@@ -437,7 +437,21 @@ fields:
 ---
 id: reason not presented
 question: |
-   Why didn't you present at hearing.
+   Why didn't you present at hearing?
+subquestion: |
+  % if attended_hearing == False:
+  If the reason you did not present these documents at the hearing is because you did not attend, be sure to include that in your answer.
+  % endif
+
+  You said you did not present these documents at the hearing:
+
+  % for el in attachments:
+    % if not el.at_hearing:
+    * ${ el.name.text }
+    % endif
+  % endfor
+
+  
 fields:
   - Reason why you did not present it at the hearing.: not_at_hearing_reason
     datatype: area
@@ -511,7 +525,7 @@ subquestion: |
 
   You need to deliver the original Notice of Appeal and the cover letter to the Board of Review. You can deliver them to the Chicago office in person, send by mail, or fax to: (630) 645-3731.
 
-  You also need to deliver, or ""serve,"" a copy of the Notice of Appeal to your former employer. You may send the notice via certified mail, or you may deliver it in person.
+  You also need to deliver, or "serve," a copy of the Notice of Appeal to your former employer. You may send the notice via certified mail, or you may deliver it in person.
 continue button field: delivery_intro
 ---
 sets:
@@ -594,6 +608,7 @@ fields:
   - Street address: users[0].address.address
     address autocomplete: True
   - Address 2: users[0].address.unit
+    maxlength: 30
     required: False
     help: |
       Appartment, floor, or unit number.
@@ -696,7 +711,7 @@ content: |
 ###################### ATTACHMENTS ##########################
 objects:
   - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal_bundle, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
-  - notice_of_appeal_bundle: ALDocumentBundle.using(title=form_name, filename="", enabled=True, elements=[
+  - notice_of_appeal_bundle: ALDocumentBundle.using(title=form_name, filename="notice_appeal_bundle.pdf", enabled=True, elements=[
         notice_of_appeal,
         additional_attachments,
       ])
@@ -764,15 +779,13 @@ attachment:
           % else:
           ${ "I disagree with the decision for the following reasons: " + appeal_reason }
           % endif
-
           % if defined('late_reason'):
             % if late_reason:
-              ${ "\n\nMy appeal is late because: " + late_reason }
+          ${ "\nMy appeal is late because: " + late_reason }
             % endif
           % endif
-
           % if attended_hearing == False:
-          ${ "\n\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
+          ${ "\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
           % endif
       - "service_name": ${ employer.name_full() }
       - "service_address": ${ employer.address.on_one_line() }
