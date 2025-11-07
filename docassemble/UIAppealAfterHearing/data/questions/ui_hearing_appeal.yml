@@ -710,17 +710,41 @@ content: |
 ---
 ###################### ATTACHMENTS ##########################
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal_bundle, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
-  - notice_of_appeal_bundle: ALDocumentBundle.using(title=form_name, filename="notice_appeal_bundle.pdf", enabled=True, elements=[
-        notice_of_appeal,
-        additional_attachments,
-      ])
+  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
 ---
 objects:
   - instructions: ALDocument.using(title="Instructions", filename="instructions.pdf", enabled=True, has_addendum=False)
-  - notice_of_appeal: ALDocument.using(title=form_name, filename="notice_of_appeal.pdf", enabled=True, has_addendum=False)
-  - additional_attachments: ALDocument.using(title="Aditional Attachments", filename="additional_attachments.pdf", enabled=False, has_addendum=False)
+  - notice_of_appeal: ALDocument.using(title=form_name, filename="notice_of_appeal.pdf", enabled=True, has_addendum=True)
   - cover_letter: ALDocument.using(title="Cover Letter", filename="cover_letter.pdf", enabled=True, has_addendum=False)
+---
+template: appeal_reason_formatted_template
+content: |
+  ${ "I disagree with the decision for the following reasons: " + appeal_reason }
+  % if defined('late_reason'):
+  % if late_reason:
+  ${ "\nMy appeal is late because: " + late_reason }
+  % endif
+  % endif
+  % if attended_hearing == False:
+  ${ "\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
+  % endif
+---
+depends on:
+  - appeal_reason
+  - late_reason
+  - attended_hearing
+  - hearing_date
+  - missed_hearing_explanation
+code: |
+  appeal_reason_formatted = str(appeal_reason_formatted_template)
+---
+code: |
+  notice_of_appeal.overflow_fields["attachments"].overflow_trigger = 2
+  notice_of_appeal.overflow_fields["appeal_reason_formatted"].overflow_trigger = 800
+---
+attachment:
+  variable name: notice_of_appeal.addendum
+  docx template file: additional_attachments.docx
 ---
 attachment:
   variable name: instructions[i]
@@ -735,13 +759,6 @@ attachment:
   filename: cover_letter
   skip undefined: True
   docx template file: cover_letter.docx
----
-attachment:
-  variable name: additional_attachments[i]
-  name: additional_attachments
-  filename: additional_attachments
-  skip undefined: True
-  docx template file: additional_attachments.docx
 ---
 attachment:
   - name: notice_of_appeal
@@ -765,7 +782,7 @@ attachment:
       - "other": ${ attachments.there_are_any }
       - "other_explain": |
           % if attachments.there_are_any:
-            % if attachments.number_gathered() <= 2:
+            % if not notice_of_appeal.overflow_fields["attachments"].has_overflow():
             ${ attachments }
             % else:
             Please see attached list of documents.
@@ -774,18 +791,10 @@ attachment:
           ""
           % endif
       - "appeal_reason": |
-          % if len(appeal_reason) > 600:
-          Please see attached reason I disagree with the decision.
+          % if not notice_of_appeal.overflow_fields["appeal_reason_formatted"].has_overflow():
+          ${ appeal_reason_formatted_template }
           % else:
-          ${ "I disagree with the decision for the following reasons: " + appeal_reason }
-          % endif
-          % if defined('late_reason'):
-            % if late_reason:
-          ${ "\nMy appeal is late because: " + late_reason }
-            % endif
-          % endif
-          % if attended_hearing == False:
-          ${ "\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
+          Please see attached statement of reasons for appeal.
           % endif
       - "service_name": ${ employer.name_full() }
       - "service_address": ${ employer.address.on_one_line() }
