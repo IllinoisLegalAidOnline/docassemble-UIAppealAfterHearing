@@ -70,8 +70,6 @@ code: |
     hearing_check
     if ask_attachment_reason:
       not_at_hearing_reason
-  if attachments.number_gathered() > 2 or len(appeal_reason) > 600:
-    set_additional
   request_transrcipt
   appeal_date
   delivery_intro
@@ -450,10 +448,8 @@ subquestion: |
     * ${ el.name.text }
     % endif
   % endfor
-
-  
 fields:
-  - Reason why you did not present it at the hearing.: not_at_hearing_reason
+  - Reason why you did not present it at the hearing: not_at_hearing_reason
     datatype: area
     rows: 3
     maxlength: 100
@@ -687,11 +683,6 @@ under: |
 
   ${ action_button_html(interview_url(i="docassemble.ILAO:feedback.yml", easy_form_interview=ilao_easy_form_url, easy_form_title=ilao_easy_form_title, easy_form_page=current_context().question_id, easy_form_variable=current_context().variable, local=False,reset=1), label=':comment: Was this program helpful?', color="#181c36", size="md", new_window=True) }
 ---
-reconsider: True
-code: |
-  additional_attachments.enabled = (attachments.there_are_any and attachments.number_gathered() > 2) or len(appeal_reason) > 600
-  set_additional = True
----
 generic object: ALDocumentBundle
 template: x.get_email_copy
 content: |
@@ -721,9 +712,9 @@ template: appeal_reason_formatted_template
 content: |
   ${ "I disagree with the decision for the following reasons: " + appeal_reason }
   % if defined('late_reason'):
-  % if late_reason:
-  ${ "\nMy appeal is late because: " + late_reason }
-  % endif
+    % if late_reason:
+    ${ "\nMy appeal is late because: " + late_reason }
+    % endif
   % endif
   % if attended_hearing == False:
   ${ "\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
@@ -741,6 +732,8 @@ code: |
 code: |
   notice_of_appeal.overflow_fields["attachments"].overflow_trigger = 2
   notice_of_appeal.overflow_fields["appeal_reason_formatted"].overflow_trigger = 800
+
+  notice_of_appeal.overflow_fields.gathered = True
 ---
 attachment:
   variable name: notice_of_appeal.addendum
@@ -782,19 +775,19 @@ attachment:
       - "other": ${ attachments.there_are_any }
       - "other_explain": |
           % if attachments.there_are_any:
-            % if not notice_of_appeal.overflow_fields["attachments"].has_overflow():
-            ${ attachments }
-            % else:
+            % if len(attachments) > 2:
             Please see attached list of documents.
+            % else:
+            ${ attachments }
             % endif
           % else:
           ""
           % endif
       - "appeal_reason": |
-          % if not notice_of_appeal.overflow_fields["appeal_reason_formatted"].has_overflow():
-          ${ appeal_reason_formatted_template }
-          % else:
+          % if len(appeal_reason_formatted) > 800:
           Please see attached statement of reasons for appeal.
+          % else:
+          ${ appeal_reason_formatted }
           % endif
       - "service_name": ${ employer.name_full() }
       - "service_address": ${ employer.address.on_one_line() }
