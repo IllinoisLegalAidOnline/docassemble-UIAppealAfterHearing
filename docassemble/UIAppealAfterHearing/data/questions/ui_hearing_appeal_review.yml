@@ -20,7 +20,7 @@ review:
     button: |
       **Late appeal reason:**
       ${ late_reason }
-    show if: late_reason
+    show if: date_difference(decision_date, today()).days >= 30
   - Edit: hearing_date
     button: |
       **Referee hearaing date:**
@@ -142,7 +142,7 @@ review:
     button: |
       **Late appeal reason:**
       ${ late_reason }
-    show if: late_reason
+    show if: date_difference(decision_date, today()).days >= 30
   - Edit: hearing_date
     button: |
       **Referee hearaing date:**

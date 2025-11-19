@@ -48,8 +48,7 @@ code: |
   if received_denial_letter == False:
     no_decision_letter
   decision_date
-  check_late_appeal
-  if decision_diff.days >= 30:
+  if date_difference(decision_date, today()).days >= 30:
     late_reason
   hearing_date
   if attended_hearing == False:
@@ -85,6 +84,7 @@ code: |
   users[0].phone_number
   users[0].id_or_ssn
 
+  appeal_reason_formatted
   set_progress(100)
   nav.set_section('section_download')
   forms_assembling
@@ -198,10 +198,6 @@ fields:
   - Finding letter date: decision_date
     datatype: ThreePartsDate
     alMax: ${ today().format("yyyy-MM-dd") }
----
-code: |
-  decision_diff = date_difference(decision_date, today())
-  check_late_appeal = True
 ---
 id: late appeal
 question: |
@@ -711,7 +707,7 @@ objects:
 template: appeal_reason_formatted_template
 content: |
   ${ "I disagree with the decision for the following reasons: " + appeal_reason }
-  % if defined('late_reason'):
+  % if date_difference(decision_date, today()).days >= 30:
     % if late_reason:
     ${ "\nMy appeal is late because: " + late_reason }
     % endif
@@ -720,12 +716,7 @@ content: |
   ${ "\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
   % endif
 ---
-depends on:
-  - appeal_reason
-  - late_reason
-  - attended_hearing
-  - hearing_date
-  - missed_hearing_explanation
+reconsider: True
 code: |
   appeal_reason_formatted = str(appeal_reason_formatted_template)
 ---
