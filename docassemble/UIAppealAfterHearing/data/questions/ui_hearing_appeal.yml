@@ -125,9 +125,9 @@ question: |
 subquestion: |
   Welcome to Illinois Legal Aid Online's **${ ilao_easy_form_title }** Easy Form.
 
-  If you were denied unemployment benefits, this program will create a form to help you ask the Illinois Department of Employment Security (IDES) to reconsider the decision made by a claims adjudicator.
+  If you are denied unemployment benefits after a referee hearing, you can appeal the decision. This program will make a Notice of Appeal to the Illinois Department of Employment Security (IDES) Board of Review. 
 
-  To learn more, read ILAO's article about [being denied unemployment insurance](https://www.illinoislegalaid.org/node/32541).
+  To learn more, read ILAO's article about [appealing a referee's unemployment benefits decision](https://www.illinoislegalaid.org/node/32466).
 
 field: sees_nav_bar
 ---
@@ -138,7 +138,7 @@ question: |
 subquestion: |
   To use this program you will need:
 
-  * A Finding letter from IDES, and
+  * A Hearing Referee's decision letter from IDES, and
   * Your Claimant ID (printed on the letter) or the last 4 digits of your Social Security Number.
   
   Set aside 5 to 10 minutes to finish this program. You can log in and save your work to continue later. 
@@ -160,7 +160,7 @@ question: |
 subquestion: |
   If you are denied unemployment benefits, you have 3 opportunities to appeal:
 
-  1. File an appeal, (**a Request for Reconsideration**)[https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing] to be heard by an IDES referee.
+  1. File an appeal, [**a Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to be heard by an IDES referee.
   
   2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. **This program creates a Notice of Appeal to the Board of Review.**
   
@@ -172,7 +172,7 @@ id: received decision letter
 question: |
   Did you get a decision letter from IDES?
 subquestion: |
-  This is a letter from a claims adjudicator at the Illinois Department of Employment Security (IDES).
+  This is a letter from a hearing referee at the Illinois Department of Employment Security (IDES).
 fields:
   - no label: received_denial_letter
     datatype: yesnoradio
@@ -195,7 +195,7 @@ id: decision letter date
 question: |
   When was the decision letter dated?
 fields:
-  - Finding letter date: decision_date
+  - Decision letter date: decision_date
     datatype: ThreePartsDate
     alMax: ${ today().format("yyyy-MM-dd") }
 ---
@@ -203,11 +203,11 @@ id: late appeal
 question: |
   Explain why you are late to file an appeal
 subquestion: |
-  You have thirty (30) days from the date on the decision to send in your Notice of Appeal. Based on the date of the decision (${ decision_date.format("MM/dd/yyyy") }), your appeal is late. For IDES to consider your appeal, you must explain why it is filed late.
+  You have thirty (30) days from the date on the decision letter to send in your Notice of Appeal. Based on the date of the decision, ${ decision_date }, your appeal is considered late. For IDES to consider your appeal, you must explain why it is filed late.
 
-  Click **Back** if you want to change the date of decision. Or you can click **Next** to make your appeal even though it is late.
+  Click **Back** if you want to change the decision date. Or you can click **Next** to make your appeal even though it is late.
 fields: 
-  - Explain why your appeal is late: late_reason
+  - My appeal is late because:: late_reason
     datatype: area
     rows: 5
     maxlength: 200
@@ -218,7 +218,7 @@ id: referee hearing date
 question: |
   When was the referee hearing?
 fields: 
-  - no label: hearing_date
+  - Referee hearing date: hearing_date
     datatype: ThreePartsDate
     alMax: ${ decision_date.format("yyyy-MM-dd") }
 ---
@@ -233,17 +233,20 @@ id: attended_hearing
 question: |
   Why didn't you attend the referee hearing?
 fields: 
-  - no label: missed_hearing_explanation
+  - "I did not attend the ${ hearing_date } hearing because:": missed_hearing_explanation
     datatype: area
     rows: 5
+    maxlength: 200
+  - note: |
+      **Note:** The form has room for about **200 characters** including spaces.
 ---
 id: docket number
 question: |
   What is the Docket Number in the decision letter?
 subquestion: |
-  The docket number should be listed on your IDES denial letter.
+  The docket number should be listed on your IDES denial letter. It is sometimes labeled as the RDS Docket Number.
 fields: 
-  - no label: docket_number
+  - Docket number: docket_number
     maxlength: 25
 ---
 ################# Your Appeal #######################
@@ -343,11 +346,13 @@ id: appeal reason
 question: |
   Why are you appealing the ${ decision_date.format("MMMM d, YYYY") } decision?
 subquestion: |
-  Explain why you think the claims adjudicator's decision was wrong. You might want to focus on different things whether you left your job voluntarily (you quit) or involuntarily (you were fired or laid off). You and the employer might have different understandings about what happened. That is why it is important to explain things from your perspective.
+  Explain why you think the hearing referee's decision was wrong. You and the employer might have different understandings about what happened. That is why it is important to explain things from your perspective.
 
+  % if termination_type == "quit":
   If you **quit**, to receive unemployment benefits you must show that you left for a good reason. It can be helpful to show what you did to try to fix problems before you quit. See ILAO's article about [getting unemployment benefits if you quit your job](https://www.illinoislegalaid.org/node/32111).
-
+  % else:
   If you were **fired**, your employer has to show that you were fired for misconduct. If you did not do what the employer said you did, you can explain that. Or you can explain how what you did was not misconduct. To learn more, see ILAO's article about [getting unemployment benefits if you were fired](https://www.illinoislegalaid.org/node/32491).
+  % endif
   
   ${ collapse_template(request_example_help) }  
 
@@ -404,7 +409,7 @@ question: |
 subquestion: |
   You can include other documents with your appeal to help prove your claim.
 
-  **Note:** If you did not present these at your first hearing, you will have to explain to the Board of Review why you did not.
+  **Note:** If you did not present these at the referee hearing, you will have to explain to the Board of Review why you did not.
 
   You need to send a copy of these documents to the Board of Review and to your former employer.
 
@@ -413,7 +418,7 @@ subquestion: |
     * Your medical records,
     * A letter from your doctor or another healthcare professional,
     * Phone records, in cases where the employer claims you were absent without calling in, or
-    * Any other document you think supports your version of events (or your story).
+    * Any other document you think supports your version of events.
 fields:
   - Add documents?: attachments.there_are_any
     datatype: yesnoradio
@@ -422,16 +427,20 @@ id: additional document details
 question: |
   ${ capitalize(ordinal(i)) } attachment details
 fields: 
-  - Document: attachments[i].name.text 
+  - Document type: attachments[i].name.text 
     maxlength: 30
-  - Short description: attachments[i].desc
+    help: |
+      Example: Letter from my doctor
+  - Short description of what the document shows: attachments[i].desc
     maxlength: 30
+    help: |
+      Example: Explains why I missed work
   - Did you present this at the referee hearing?: attachments[i].at_hearing
     datatype: yesnoradio
 ---
 id: reason not presented
 question: |
-   Why didn't you present at hearing?
+   Why didn't you present the documents at the referee hearing?
 subquestion: |
   % if attended_hearing == False:
   If the reason you did not present these documents at the hearing is because you did not attend, be sure to include that in your answer.
@@ -445,7 +454,7 @@ subquestion: |
     % endif
   % endfor
 fields:
-  - Reason why you did not present it at the hearing: not_at_hearing_reason
+  - "I did not present the documents at the hearing because:": not_at_hearing_reason
     datatype: area
     rows: 3
     maxlength: 100
@@ -454,7 +463,7 @@ id: any more documents
 question: |
   Do you want to add any other documents to your appeal?
 subquestion: |
-  So far you told us about ...
+  So far you told us about:
 
   % for el in attachments:
   * ${ el.name.text }
@@ -477,37 +486,37 @@ code: |
 ---
 id: request transcript
 question: |
-  Do you want to include a request for the transcript in your letter?
+  Do you want to review the transcript of the referee hearing and the full record?
 subquestion: |
   You can request a transcript of the referee hearing and a copy of the record from IDES. You can use these if you want to make an additional written argument to the Board of Review that explains why you should get benefits.
 
-  **Important:** There is a very short deadline - 10 days from when the transcript is mailed to you - to submit your written argument to the Board of Review and to the employer.
+  **Important:** You will have only 10 days from when the transcript is mailed to you to submit your written argument to the Board of Review and to the employer.
 
-  Like the Notice of Appeal made by this program, you can deliver your written argument to the IDES Chicago office:
+  Like the Notice of Appeal made by this Easy Form, you can deliver your written argument to the IDES Chicago office:
 
     * In person,
     * Send by mail, or
     * Fax to: (630) 645-3731.
 
-  The address of the IDES Board of Review Chicago office is on the cover letter.
+  The address of the IDES Board of Review Chicago office is on the cover letter you can download in a few screens.
 fields: 
-  - no label: request_transrcipt
+  - Ask IDES for a transcript and copy of the record?: request_transrcipt
     datatype: yesnoradio
 ---
 id: appeal date
 question: |
   When you will send your appeal?
 subquestion: |
-  After you download your appeal, you can mail, fax or deliver it to your local IDES office. The address and fax number appear on the Finding letter or Determination. You can also use the [**IDES Office Locator**](https://ides.illinois.gov/about/locations.html).
+  After you download your appeal forms, you can mail, fax or deliver them to your local IDES office. The address and fax number should appear on the decision letter. You can also use the [**IDES Office Locator**](https://ides.illinois.gov/about/locations.html).
 
-  **Note:** Be sure to send your appeal within 30 days of when your Finding letter was dated (${decision_date}).
+  **Note:** Be sure to send your appeal within 30 days of when your decision letter was dated (${decision_date}).
 fields:
   - Date you will send your appeal: appeal_date
-    datatype: ThreePartsDate
-    alMin: ${ today().format("yyyy-MM-dd") }
+    datatype: date
+    min: ${ today().format("yyyy-MM-dd") }
     required: False
   - note: |
-      If you don't know this now, leave it blank. Be sure to add the date when you sign the request.
+      If you don't know this now, leave it blank. Be sure to add the date when you sign the Notice of Appeal.
 ---
 id: delivery intro
 question: |
@@ -517,7 +526,7 @@ subquestion: |
 
   You need to deliver the original Notice of Appeal and the cover letter to the Board of Review. You can deliver them to the Chicago office in person, send by mail, or fax to: (630) 645-3731.
 
-  You also need to deliver, or "serve," a copy of the Notice of Appeal to your former employer. You may send the notice via certified mail, or you may deliver it in person.
+  You also need to deliver, or "serve," a copy of the Notice of Appeal to your former employer. You can send the notice via certified mail, or you can deliver it in person.
 continue button field: delivery_intro
 ---
 sets:
@@ -536,6 +545,7 @@ fields:
   - Street address: employer.address.address
     address autocomplete: True
   - Address line 2: employer.address.unit
+    maxlength: 20
     required: False
   - City: employer.address.city
   - State: employer.address.state
@@ -547,27 +557,26 @@ fields:
 id: former employer delivery
 question: |
   Delivery to ${ employer.name_full()}
+subquestion: |
+  **Note:** If you do not know this now, be sure to add it to your forms later.
 fields:
-  - How will you deliver the letter and appeal to ${ employer.name_full() }?: delivery_method
+  - "How will you deliver the letter and appeal to ${ employer.name_full() }?": delivery_method
     datatype: radio
     choices: 
       - Mail: certify
       - Personal delivery: delivery
       - I don't know. I will add this to my form later.: no
-  - When will you deliver the letter and appeal to ${ employer.name_full() }?: delivery_date
-    datatype: ThreePartsDate
-    alMin: ${ today().format("yyyy-MM-dd") }
+  - "When will you deliver the letter and appeal to ${ employer.name_full() }?": delivery_date
+    datatype: date
+    min: ${ today().format("yyyy-MM-dd") }
     required: False
-  - note: |
-      *If you do not know this now, be sure to add it to your Notice of Appeal later.*
 ---
-id: recertification reminder
+id: certification reminder
 question: |
-  Important
+  Remember to certify
 subquestion: |
-
   <div class="alert alert-info ilao-info" role="alert">
-    <h6 class="alert-heading">Remember to re-certify</h6>
+    <h6 class="alert-heading">Remember to certify</h6>
     <p>During the appeal process, you must continue to certify that you are eligible for unemployment benefits for each two-week period you are unemployed.</p>
     <p>You can do this online or by phone using Tele-Serve.</p>
   </div>
@@ -615,7 +624,7 @@ id: your contact information
 question: |
   What is your phone number?
 subquestion: |
-  Most referee hearings are conducted by phone.
+  Your phone number will be listed on your cover letter.
 fields:  
   - Phone number: users[0].phone_number
     datatype: al_international_phone
@@ -657,9 +666,9 @@ event: get_docs_screen
 question: |
   Download
 subquestion: |
-  Your form is ready. View and download your form below. Click **:edit: Make changes** to fix any mistakes.
+  Your forms are ready. View and download your forms below. Click **:edit: Make changes** to fix any mistakes.
 
-  This program **does not deliver** your form to IDES. You will need to do that yourself.
+  This program **does not deliver** your forms to IDES or your former employer. You will need to do that yourself.
 
   ${ action_button_html(url_action('review_answers'), label=':edit: Make changes', color='success', size="md") }
 
@@ -669,7 +678,7 @@ subquestion: |
 
   ${ al_user_bundle.send_button_html(show_editable_checkbox=False) }
 
-  **Note:** This program **does not deliver** your form to IDES. You will need to do that yourself.
+  **Note:** This program **does not deliver** your forms to IDES or your former employer. You will need to do that yourself.
   
   Thank you for using ILAO Easy Forms!
 under: |
@@ -687,7 +696,7 @@ content: |
 generic object: ALDocumentBundle
 template: x.send_email_template
 subject: |
-  Unemployment hearing request forms
+  Unemployment appeal forms
 content: |
   Your forms are attached.
   
