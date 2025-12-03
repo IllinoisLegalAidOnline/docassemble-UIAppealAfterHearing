@@ -476,6 +476,7 @@ code: |
   attachments[i].name.text
   attachments[i].complete = True
 ---
+# might have to add reconsider: True
 code: |
   for el in attachments:
     if not el.at_hearing:
@@ -648,7 +649,7 @@ subject: |
 content: |  
   The Claimant ID can be found in the upper-right of the UI Finding letter, as well as other letters and emails received from IDES.
   
-  [FILE findingletterexample.jpeg, 100%, Locating a Claimant ID on IDES letter]
+  [FILE ui.findling.letter.snip.png, 100%, Locating a Claimant ID on IDES letter]
 ---
 id: forms assembling
 continue button field: forms_assembling
