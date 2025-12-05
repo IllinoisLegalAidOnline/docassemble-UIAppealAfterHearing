@@ -1,7 +1,7 @@
 metadata:
-  title: Unemployment appeal after a hearing
-  short title: Unemployment appeal after hearing
-  comment: This Easy Form will help you make forms to ask the Illinois Department of Employment Security (IDES) to reconsider a decision to deny you unemployment benefits. It creates a Request for Reconsideration of Claims Adjudicator's Determination that asks for a referee hearing.
+  title: Unemployment benefits appeal after a hearing
+  short title: Unemployment benefits appeal
+  comment: This Easy Form will help you make forms to appeal a decision by the Illinois Department of Employment Security (IDES) denying you unemployment benefits after a referee hearing. It creates a Notice of Appeal.
   authors:
     - Jim Graszer
     - Matt Newsted
@@ -66,9 +66,7 @@ code: |
   appeal_reason
   if attachments.there_are_any:
     attachments.gather()
-    hearing_check
-    if ask_attachment_reason:
-      not_at_hearing_reason
+    not_at_hearing_reason
   request_transrcipt
   appeal_date
   delivery_intro
@@ -138,7 +136,7 @@ question: |
 subquestion: |
   To use this program you will need:
 
-  * A Hearing Referee's decision letter from IDES, and
+  * A hearing referee's decision letter from IDES, and
   * Your Claimant ID (printed on the letter) or the last 4 digits of your Social Security Number.
   
   Set aside 5 to 10 minutes to finish this program. You can log in and save your work to continue later. 
@@ -160,7 +158,7 @@ question: |
 subquestion: |
   If you are denied unemployment benefits, you have 3 opportunities to appeal:
 
-  1. File an appeal, [**a Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to be heard by an IDES referee.
+  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask for a review of the claim adjudicator's decision. This will be done at a hearing with an IDES referee.
   
   2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. **This program creates a Notice of Appeal to the Board of Review.**
   
@@ -196,8 +194,8 @@ question: |
   When was the decision letter dated?
 fields:
   - Decision letter date: decision_date
-    datatype: ThreePartsDate
-    alMax: ${ today().format("yyyy-MM-dd") }
+    datatype: date
+    max: ${ today().format("yyyy-MM-dd") }
 ---
 id: late appeal
 question: |
@@ -205,22 +203,22 @@ question: |
 subquestion: |
   You have thirty (30) days from the date on the decision letter to send in your Notice of Appeal. Based on the date of the decision, ${ decision_date }, your appeal is considered late. For IDES to consider your appeal, you must explain why it is filed late.
 
-  Click **Back** if you want to change the decision date. Or you can click **Next** to make your appeal even though it is late.
+  Click **Back** if you want to change the decision date. Or you can explain why you are filing after 30 days and click **Next** to make your appeal even though it is late.
 fields: 
   - My appeal is late because:: late_reason
     datatype: area
-    rows: 5
-    maxlength: 200
+    rows: 7
+    maxlength: 300
   - note: |
-      **Note:** The form has room for about **200 characters** including spaces.
+      **Note:** The form has room for about **300 characters** including spaces.
 ---
 id: referee hearing date
 question: |
   When was the referee hearing?
 fields: 
   - Referee hearing date: hearing_date
-    datatype: ThreePartsDate
-    alMax: ${ decision_date.format("yyyy-MM-dd") }
+    datatype: date
+    max: ${ decision_date.format("yyyy-MM-dd") }
 ---
 id: attend hearing
 question: |
@@ -235,10 +233,10 @@ question: |
 fields: 
   - "I did not attend the ${ hearing_date } hearing because:": missed_hearing_explanation
     datatype: area
-    rows: 5
-    maxlength: 200
+    rows: 7
+    maxlength: 300
   - note: |
-      **Note:** The form has room for about **200 characters** including spaces.
+      **Note:** The form has room for about **300 characters** including spaces.
 ---
 id: docket number
 question: |
@@ -294,9 +292,11 @@ subquestion: |
 
   For example, you could explain:
 
-  * If you sent in a formal complaint about working conditions, or
-  * If you went to talk about your work problems with your supervisor and tried to work out a solution.
-  * If you did not do this, you need to explain why.
+  * If you sent in a formal complaint about working conditions,
+  * If you went to talk about your work problems with your supervisor and tried to work out a solution, or
+  * If you told your supervisor about family or medical needs that required an adjustment to your work schedule.
+  
+  If you did not try to solve the problem before quitting, it can be helpful to explain why.
 continue button field: quit_solve_problems
 ---
 template: not_misconduct_help 	
@@ -356,14 +356,14 @@ subquestion: |
   
   ${ collapse_template(request_example_help) }  
 
-  **Note:** The form has room for about **1,300 characters** including spaces.
+  **Note:** The form has room for about **1,500 characters** including spaces.
 fields:
   - raw html: |
-      <span id="areacounter" maxlength="1300">
+      <span id="areacounter" maxlength="1500">
   - no label: appeal_reason
     input type: area
-    rows: 18
-    maxlength: 1300
+    rows: 20
+    maxlength: 1500
   - raw html: |
       </span>
 script: |
@@ -407,9 +407,9 @@ id: any additional documents
 question: |
   Additional documents
 subquestion: |
-  You can include other documents with your appeal to help prove your claim.
+  You can include up to five other documents with your appeal to help prove your claim.
 
-  **Note:** If you did not present these at the referee hearing, you will have to explain to the Board of Review why you did not.
+  **Note:** You can only add documents or evidence if you did not present them at the hearing through no fault of your own.
 
   You need to send a copy of these documents to the Board of Review and to your former employer.
 
@@ -432,42 +432,42 @@ fields:
     help: |
       Example: Letter from my doctor
   - Short description of what the document shows: attachments[i].desc
-    maxlength: 30
+    maxlength: 40
     help: |
       Example: Explains why I missed work
-  - Did you present this at the referee hearing?: attachments[i].at_hearing
-    datatype: yesnoradio
 ---
 id: reason not presented
 question: |
    Why didn't you present the documents at the referee hearing?
 subquestion: |
-  % if attended_hearing == False:
-  If the reason you did not present these documents at the hearing is because you did not attend, be sure to include that in your answer.
-  % endif
-
   You said you did not present these documents at the hearing:
 
   % for el in attachments:
-    % if not el.at_hearing:
     * ${ el.name.text }
-    % endif
   % endfor
+  % if attended_hearing == False:
+  
+  If the reason you did not present these documents at the hearing is because you did not attend, be sure to include that in your answer.
+  % endif
 fields:
   - "I did not present the documents at the hearing because:": not_at_hearing_reason
     datatype: area
     rows: 3
-    maxlength: 100
+    maxlength: 150
+  - note: |
+      **Note:** The form has room for about **150 characters** including spaces.
 ---
 id: any more documents
 question: |
   Do you want to add any other documents to your appeal?
 subquestion: |
-  So far you told us about:
+  You can attach up to five documents. So far you told us about:
 
   % for el in attachments:
   * ${ el.name.text }
   % endfor
+
+  **Note:** You can only add documents or evidence if you did not present them at the hearing through no fault of your own.  
 fields:
   - Include another document?: attachments.there_is_another
     datatype: yesnoradio
@@ -476,14 +476,21 @@ code: |
   attachments[i].name.text
   attachments[i].complete = True
 ---
-# might have to add reconsider: True
+#reconsider: True
+#code: |
+#  ask_attachment_reason = False
+#  
+#  if attachments.number() > 0:
+#    for el in attachments:
+#      if not el.at_hearing:
+#        ask_attachment_reason = True
+#        break
+#    
+#  hearing_check = True
+---
 code: |
-  for el in attachments:
-    if not el.at_hearing:
-      ask_attachment_reason = True
-      break
-    
-  hearing_check = True
+  if attachments.number_gathered() == 5:
+    attachments.there_is_another = False
 ---
 id: request transcript
 question: |
@@ -492,14 +499,6 @@ subquestion: |
   You can request a transcript of the referee hearing and a copy of the record from IDES. You can use these if you want to make an additional written argument to the Board of Review that explains why you should get benefits.
 
   **Important:** You will have only 10 days from when the transcript is mailed to you to submit your written argument to the Board of Review and to the employer.
-
-  Like the Notice of Appeal made by this Easy Form, you can deliver your written argument to the IDES Chicago office:
-
-    * In person,
-    * Send by mail, or
-    * Fax to: (630) 645-3731.
-
-  The address of the IDES Board of Review Chicago office is on the cover letter you can download in a few screens.
 fields: 
   - Ask IDES for a transcript and copy of the record?: request_transrcipt
     datatype: yesnoradio
@@ -508,7 +507,7 @@ id: appeal date
 question: |
   When you will send your appeal?
 subquestion: |
-  After you download your appeal forms, you can mail, fax or deliver them to your local IDES office. The address and fax number should appear on the decision letter. You can also use the [**IDES Office Locator**](https://ides.illinois.gov/about/locations.html).
+  After you download your appeal forms, you will need to send them to IDES and to your former employer.
 
   **Note:** Be sure to send your appeal within 30 days of when your decision letter was dated (${decision_date}).
 fields:
@@ -525,9 +524,12 @@ question: |
 subquestion: |
   This program creates a Notice of Appeal and a cover letter.
 
-  You need to deliver the original Notice of Appeal and the cover letter to the Board of Review. You can deliver them to the Chicago office in person, send by mail, or fax to: (630) 645-3731.
+  You need to deliver the original Notice of Appeal and the cover letter to the Board of Review.
+  
+  * You can deliver them to the Chicago office at 115 South LaSalle Street, 19th Floor, in person, by mail, or fax to: (630) 645-3731.
+  * You can also deliver them to your local IDES office. The local IDES office address and fax number should be on the decision letter. You can also use the [**IDES Office Locator**](https://ides.illinois.gov/about/locations.html).
 
-  You also need to deliver, or "serve," a copy of the Notice of Appeal to your former employer. You can send the notice via certified mail, or you can deliver it in person.
+  You also need to deliver, or "serve," a copy of the Notice of Appeal to your former employer. You can send the notice by certified mail, or you can deliver it in person.
 continue button field: delivery_intro
 ---
 sets:
@@ -535,6 +537,8 @@ sets:
 id: former employer
 question: |
   Former employer
+subquestion: |
+  You will need to send them a copy of your cover letter, Notice of Appeal, and any additional documents you are sending to IDES.
 fields: 
   - code: |
       employer.name_fields(person_or_business='unsure')
@@ -564,7 +568,7 @@ fields:
   - "How will you deliver the letter and appeal to ${ employer.name_full() }?": delivery_method
     datatype: radio
     choices: 
-      - Mail: certify
+      - Certified mail: certify
       - Personal delivery: delivery
       - I don't know. I will add this to my form later.: no
   - "When will you deliver the letter and appeal to ${ employer.name_full() }?": delivery_date
@@ -776,13 +780,13 @@ attachment:
       - "other": ${ attachments.there_are_any }
       - "other_explain": |
           % if attachments.there_are_any:
-            % if len(attachments) > 2:
+            % if len(attachments) > 1:
             Please see attached list of documents.
             % else:
             ${ attachments }
             % endif
           % else:
-          ""
+          ${""}
           % endif
       - "appeal_reason": |
           % if len(appeal_reason_formatted) > 800:

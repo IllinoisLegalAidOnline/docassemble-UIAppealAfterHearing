@@ -73,7 +73,7 @@ review:
       **Reason why you did not present additional documents at the hearing:**
       
       ${ not_at_hearing_reason } 
-    show if: attachments.there_are_any and ask_attachment_reason
+    show if: attachments.there_are_any
   - Edit: employer.name.first
     button: |
       **Former employer:**
@@ -87,7 +87,7 @@ review:
       **Deliver to ${ employer.name_full() } through:**
 
       % if delivery_method == 'certify':
-      * Mail
+      * Certified mail
       % elif delivery_method == 'delivery':
       * Personal delivery
       % else:
@@ -202,7 +202,7 @@ review:
       **Reason why you did not present additional documents at the hearing:**
       
       ${ not_at_hearing_reason } 
-    show if: attachments.there_are_any and ask_attachment_reason
+    show if: attachments.there_are_any
   - Edit: employer.name.first
     button: |
       **Former employer:**
@@ -216,7 +216,7 @@ review:
       **Deliver to ${ employer.name_full() } through:**
       
       % if delivery_method == 'certify':
-      * Mail
+      * Certified mail
       % elif delivery_method == 'delivery':
       * Personal delivery
       % else:
@@ -281,10 +281,7 @@ question: |
 subquestion: |
   ${ attachments.table }
 
+  % if attachments.number_gathered() < 5:
   ${ attachments.add_action() }
+  % endif
 ---
-# removed from attachments review screen
-#  % if attachments.number_gathered() < 3:
-#  ${ attachments.add_action() }
-#  % endif
-#---
