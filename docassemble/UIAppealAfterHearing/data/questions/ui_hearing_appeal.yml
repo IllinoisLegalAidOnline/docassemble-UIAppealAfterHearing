@@ -160,7 +160,7 @@ subquestion: |
 
   1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask for a review of the claim adjudicator's decision. This will be done at a hearing with an IDES referee.
   
-  2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. **This program creates a Notice of Appeal to the Board of Review.**
+  2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. **This Easy Form makes a Notice of Appeal to the Board of Review.**
   
   3. Finally, if you don't agree with the Board of Review's decision, file an Administrative Review Action in Circuit Court.
 
@@ -279,7 +279,7 @@ subquestion: |
   * You were not able to perform your work.
   * You left because of your medical problem or the medical problem of a spouse, child, or parent. You gave your employer a doctor's note proving the illness or disability, and you told your employer you were going to miss work.
   * Your employer was violating laws regarding your wages or work conditions.
-  * Your employer greatly reduced your pay, your hours, and/or your benefits.
+  * Your employer greatly reduced your pay, your hours, or your benefits.
   * You left your job because you had a serious job offer (including a starting date and rate of pay), and you stayed at your current job until just before the new job was to start.
   * For some other reason, your workplace or working conditions were such that any reasonable worker would want to quit. These reasons should be related to your ability to do your job, not what is happening in your life outside of your job.
 continue button field: quit_intro  
@@ -333,7 +333,7 @@ template: request_example_help
 subject: |
   **Can I see an example?**	
 content: |
-  For example, you could say: "The decision letter I received says I was fired for misconduct. However, my employer refused to give me proper safety equipment. My job involves working with hazardous materials. When I told my boss I would not handle the waste without safety equipment, I was fired." 
+  For example, you could say: "The decision letter I received says I was fired for misconduct. However, my employer refused to give me proper safety equipment. My job involves working with hazardous materials. When I told my boss I would not handle the waste without safety equipment, I was fired."
 ---
 ### currently unused ###
 template: ides_legal_services_help	
@@ -509,7 +509,11 @@ question: |
 subquestion: |
   After you download your appeal forms, you will need to send them to IDES and to your former employer.
 
+  % if date_difference(decision_date, today()).days >= 30:
+  **Note:** Since it is already 30 days since your ${decision_date} decision letter, you should send it as soon as possible.
+  % else:
   **Note:** Be sure to send your appeal within 30 days of when your decision letter was dated (${decision_date}).
+  % endif
 fields:
   - Date you will send your appeal: appeal_date
     datatype: date

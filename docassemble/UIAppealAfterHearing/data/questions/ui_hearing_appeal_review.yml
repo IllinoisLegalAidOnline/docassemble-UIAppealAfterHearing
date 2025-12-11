@@ -24,7 +24,7 @@ review:
     show if: date_difference(decision_date, today()).days >= 30
   - Edit: hearing_date
     button: |
-      **Referee hearaing date:**
+      **Referee hearing date:**
       ${ hearing_date }
   - Edit: attended_hearing
     button: |
@@ -147,7 +147,7 @@ review:
     show if: date_difference(decision_date, today()).days >= 30
   - Edit: hearing_date
     button: |
-      **Referee hearaing date:**
+      **Referee hearing date:**
       ${ hearing_date }
   - Edit: attended_hearing
     button: |
