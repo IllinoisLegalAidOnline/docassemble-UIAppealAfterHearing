@@ -67,7 +67,7 @@ code: |
   if attachments.there_are_any:
     attachments.gather()
     not_at_hearing_reason
-  request_transrcipt
+  request_transcript
   appeal_date
   delivery_intro
   employer.name.first
@@ -136,7 +136,7 @@ question: |
 subquestion: |
   To use this program you will need:
 
-  * A hearing referee's decision letter from IDES, and
+  * A decision letter from an IDES hearing referee, and
   * Your Claimant ID (printed on the letter) or the last 4 digits of your Social Security Number.
   
   Set aside 5 to 10 minutes to finish this program. You can log in and save your work to continue later. 
@@ -158,13 +158,13 @@ question: |
 subquestion: |
   If you are denied unemployment benefits, you have 3 opportunities to appeal:
 
-  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask for a review of the claim adjudicator's decision. This will be done at a hearing with an IDES referee.
+  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask IDES to review a claim adjudicator's decision. You will have a hearing with an IDES referee who will make a decision.
   
   2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. **This Easy Form makes a Notice of Appeal to the Board of Review.**
   
   3. Finally, if you don't agree with the Board of Review's decision, file an Administrative Review Action in Circuit Court.
 
-  **Note:** IDES offers free legal service to represent claimants in their unemployment benefits appeals. See the [**IDES Legal Services Program**](https://ides.illinois.gov/resources/legal-services-program/legal-services.html) to find out if you qualify.
+  **Note:** IDES offers free legal services to people who are appealing unemployment benefit decisions. See the [**IDES Legal Services Program**](https://ides.illinois.gov/resources/legal-services-program/legal-services.html) to find out if you qualify.
 ---
 id: received decision letter
 question: |
@@ -191,7 +191,7 @@ buttons:
 ---
 id: decision letter date
 question: |
-  When was the decision letter dated?
+  What is the date on the decision letter?
 fields:
   - Decision letter date: decision_date
     datatype: date
@@ -250,18 +250,16 @@ fields:
 ################# Your Appeal #######################
 id: termination type
 question: |
-  How did your employment end?
+  How did your job end?
 subquestion: |
-  Your decision letter tells you the decision of the referee who held your hearing and heard the testimony.
-
-  You need to explain the reason why you believe the referee's decision was wrong.
-
-  Referees make their decisions based on how your employment ended. Your employment could have ended:
+  Your job could have ended:
 
   * Voluntarily, for example you quit your job, or
   * Involuntarily, for example you were fired or the business closed.
+
+  This matters because it affects what you will say in your appeal.
 fields:
-  - How did your employment end?: termination_type
+  - How did your job end?: termination_type
     datatype: radio
     choices: 
       - I quit.: quit
@@ -273,7 +271,7 @@ question: |
 subquestion: |
   To get benefits, you must prove that you quit for a good cause.
 
-  A referee may decide you quit for a good cause and thus allow you to receive benefits if you can show one of these reasons applies to your situation.
+  IDES may decide you quit for a good cause and thus allow you to receive benefits if you can show one of these reasons applies to your situation.
 
   * The job posed a risk to your health, safety, or morals.
   * You were not able to perform your work.
@@ -303,7 +301,7 @@ template: not_misconduct_help
 subject: |
   **How do I know if what I did was misconduct?**	
 content: |
-  These will probably not be found to be misconduct.
+  The following situations are usually not misconduct.
 
     * You were fired because your employer thought your work wasn't good enough, but you had tried your best to do it right. For example, if you made several mistakes while operating the cash register, but did not mean to make those mistakes.
     * You didn't know what you were doing was wrong because no one had told you or warned you about it. For example, if you were not warned by your supervisor that you should lock the tool cabinet, and you didn't know it was a rule.
@@ -317,12 +315,12 @@ id: fired intro
 question: |
   Being fired for misconduct
 subquestion: |
-  Your employer has to prove that you were fired for "misconduct." This means that you were fired because of something you did on purpose that broke a rule or policy.
+  If your employer says you were fired for "misconduct," they must prove it. Misconduct means you intentionally broke a workplace rule or policy.
 
-  To get benefits, you need to show that:
-
-  * You did not do the acts which your employer says you did, or 
-  * Those acts were not misconduct.
+  To get benefits, you must show one of these is true:
+  
+  * You did not do what your employer says you did, or
+  * What you did was not misconduct.
 
   ${ collapse_template(not_misconduct_help) }  
 
@@ -346,7 +344,7 @@ id: appeal reason
 question: |
   Why are you appealing the ${ decision_date.format("MMMM d, YYYY") } decision?
 subquestion: |
-  Explain why you think the hearing referee's decision was wrong. You and the employer might have different understandings about what happened. That is why it is important to explain things from your perspective.
+  Explain why you think the hearing referee's decision was wrong. You and your employer may have different views about what happened. This is why it is important to explain your side of the story.
 
   % if termination_type == "quit":
   If you **quit**, to receive unemployment benefits you must show that you left for a good reason. It can be helpful to show what you did to try to fix problems before you quit. See ILAO's article about [getting unemployment benefits if you quit your job](https://www.illinoislegalaid.org/node/32111).
@@ -494,18 +492,20 @@ code: |
 ---
 id: request transcript
 question: |
-  Do you want to review the transcript of the referee hearing and the full record?
+  Do you want to review the transcript of the referee hearing and the record?
 subquestion: |
-  You can request a transcript of the referee hearing and a copy of the record from IDES. You can use these if you want to make an additional written argument to the Board of Review that explains why you should get benefits.
+  A transcript is a written copy of everything that was said at your referee hearing. The record includes the transcript and other documents from your case.
+  
+  You can ask IDES for these documents. They can help you write an additional statement explaining why you should receive benefits.
 
-  **Important:** You will have only 10 days from when the transcript is mailed to you to submit your written argument to the Board of Review and to the employer.
+  **Important:** You will have only 10 days from when the transcript is mailed to you to send **an additional written statement** to the Board of Review and to your employer.
 fields: 
-  - Ask IDES for a transcript and copy of the record?: request_transrcipt
+  - Ask IDES for a transcript and copy of the record?: request_transcript
     datatype: yesnoradio
 ---
 id: appeal date
 question: |
-  When you will send your appeal?
+  When you will send or deliver your appeal?
 subquestion: |
   After you download your appeal forms, you will need to send them to IDES and to your former employer.
 
@@ -515,7 +515,7 @@ subquestion: |
   **Note:** Be sure to send your appeal within 30 days of when your decision letter was dated (${decision_date}).
   % endif
 fields:
-  - Date you will send your appeal: appeal_date
+  - Date you will send or deliver your appeal: appeal_date
     datatype: date
     min: ${ today().format("yyyy-MM-dd") }
     required: False

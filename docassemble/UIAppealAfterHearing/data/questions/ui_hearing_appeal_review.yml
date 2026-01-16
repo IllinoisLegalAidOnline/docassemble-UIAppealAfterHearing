@@ -74,6 +74,18 @@ review:
       
       ${ not_at_hearing_reason } 
     show if: attachments.there_are_any
+  - Edit: request_transcript
+    button: |
+      **Ask IDES for a transcript?**
+      ${ word(yesno(request_transcript)) }
+  - Edit: appeal_date
+    button: |
+      **Date you will send or deliver your appeal:**
+      % if appeal_date == "":
+      None entered
+      % else:
+      ${ appeal_date }
+      % endif
   - Edit: employer.name.first
     button: |
       **Former employer:**
@@ -203,6 +215,18 @@ review:
       
       ${ not_at_hearing_reason } 
     show if: attachments.there_are_any
+  - Edit: request_transcript
+    button: |
+      **Ask IDES for a transcript?**
+      ${ word(yesno(request_transcript)) }
+  - Edit: appeal_date
+    button: |
+      **Date you will send or deliver your appeal:**
+      % if appeal_date == "":
+      None entered
+      % else:
+      ${ appeal_date }
+      % endif
   - Edit: employer.name.first
     button: |
       **Former employer:**
