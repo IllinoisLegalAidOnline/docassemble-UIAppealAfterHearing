@@ -720,7 +720,7 @@ objects:
 objects:
   - instructions: ALDocument.using(title="Instructions", filename="instructions.pdf", enabled=True, has_addendum=False)
   - notice_of_appeal: ALDocument.using(title=form_name, filename="notice_of_appeal.pdf", enabled=True, has_addendum=True)
-  - cover_letter: ALDocument.using(title="Cover Letter", filename="cover_letter.pdf", enabled=True, has_addendum=False)
+  - cover_letter: ALDocument.using(title="Cover letter", filename="cover_letter.pdf", enabled=True, has_addendum=False)
 ---
 template: appeal_reason_formatted_template
 content: |
