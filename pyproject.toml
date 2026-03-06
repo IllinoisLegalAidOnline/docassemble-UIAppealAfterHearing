@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docassemble.UIAppealAfterHearing"
-version = "0.3.1"
+version = "0.4.0"
 description = "A docassemble extension."
 readme = "README.md"
 authors = [

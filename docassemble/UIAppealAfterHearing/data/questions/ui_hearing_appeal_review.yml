@@ -26,6 +26,22 @@ review:
     button: |
       **Referee hearing date:**
       ${ hearing_date }
+  - Edit: hearing_time
+    button: |
+      **Referee hearing time:**
+      % if hearing_time == "":
+      None entered
+      % else:
+      ${ format_time(hearing_time, format='h:mm a') }
+      % endif
+  - Edit: hearing_judge
+    button: |
+      **Referee hearing judge:**
+      % if hearing_judge == "":
+      None entered
+      % else:
+      ${ hearing_judge }
+      % endif
   - Edit: attended_hearing
     button: |
       **Attended referee hearing?**
@@ -161,6 +177,22 @@ review:
     button: |
       **Referee hearing date:**
       ${ hearing_date }
+  - Edit: hearing_time
+    button: |
+      **Referee hearing time:**
+      % if hearing_time == "":
+      None entered
+      % else:
+      ${ format_time(hearing_time, format='h:mm a') }
+      % endif
+  - Edit: hearing_judge
+    button: |
+      **Referee hearing judge:**
+      % if hearing_judge == "":
+      None entered
+      % else:
+      ${ hearing_judge }
+      % endif
   - Edit: attended_hearing
     button: |
       **Attended referee hearing?**

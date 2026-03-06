@@ -158,11 +158,11 @@ question: |
 subquestion: |
   If you are denied unemployment benefits, you have 3 opportunities to appeal:
 
-  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask IDES to review a claim adjudicator's decision. You will have a hearing with an IDES referee who will make a decision.
+  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask IDES to review a claim adjudicator's decision. The Request for Reconsideration must be filed **within 30 days** after the claim adjudicator determination is delivered. You will have a hearing with an IDES referee who will make a decision.
   
-  2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. **This Easy Form makes a Notice of Appeal to the Board of Review.**
+  2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. The appeal must be filed **within 30 days** after the Referee's Decision is delivered. **This Easy Form makes a Notice of Appeal to the Board of Review.**
   
-  3. Finally, if you don't agree with the Board of Review's decision, file an Administrative Review Action in Circuit Court.
+  3. Finally, if you don't agree with the Board of Review's decision, file an Administrative Review Action (ARA) in Circuit Court. The ARA must be filed **within 35 days** of the Board of Review's decision.
 
   **Note:** IDES offers free legal services to people who are appealing unemployment benefit decisions. See the [**IDES Legal Services Program**](https://ides.illinois.gov/resources/legal-services-program/legal-services.html) to find out if you qualify.
 ---
@@ -212,13 +212,21 @@ fields:
   - note: |
       **Note:** The form has room for about **300 characters** including spaces.
 ---
-id: referee hearing date
+id: referee hearing info
 question: |
-  When was the referee hearing?
+  Referee hearing information
+subquestion: |
+  These details should be on the decision letter.
 fields: 
-  - Referee hearing date: hearing_date
+  - On what date was the referee hearing?: hearing_date
     datatype: date
     max: ${ decision_date.format("yyyy-MM-dd") }
+  - At what time was the referee hearing?: hearing_time
+    datatype: time
+    required: False
+  - Who was the referee hearing judge?: hearing_judge
+    maxlength: 50
+    required: False
 ---
 id: attend hearing
 question: |
@@ -327,11 +335,25 @@ subquestion: |
   For more information, see [Getting unemployment benefits if I was fired.](https://www.illinoislegalaid.org/legal-information/getting-unemployment-benefits-if-i-was-fired)
 continue button field: fired_intro
 ---
-template: request_example_help	
+template: example_help	
 subject: |
-  **Can I see an example?**	
+  **Can I see some examples?**	
 content: |
-  For example, you could say: "The decision letter I received says I was fired for misconduct. However, my employer refused to give me proper safety equipment. My job involves working with hazardous materials. When I told my boss I would not handle the waste without safety equipment, I was fired."
+  Here are some examples:
+  
+  * "The decision letter I received says I was fired for misconduct. However, my employer refused to give me proper safety equipment. My job involves working with hazardous materials. When I told my boss I would not handle the waste without safety equipment, I was fired."
+
+  * "The decision letter I received says that I was fired for misconduct because I could not keep up with the volume of work. It was not intentional. I fell behind because I did not have adequate training."
+
+  * "The decision letter I received says that I was fired for misconduct. My employer said that I was a no-call-no-show, but I have text messages that show that I informed my employer that I was sick."
+
+  * "The decision letter I received says I was fired for misconduct. I told my supervisor that I will be coming to work an hour late for the next two months so I could take my mother to physical therapy as she is recovering from surgery. My supervisor agreed to this in writing. However, the boss of my supervisor fired me for frequent tardiness despite this agreement."
+
+  * "The decision letter I received says that I quit my job. I stopped going to work because I have a medical condition, and I was on approved FMLA leave."
+
+  * "The decision letter I received says that I quit my job. I was working full-time when I started the job, but my employer took away a lot of my shifts and gave them to another employee after I complained to HR about discrimination."
+
+  * "The decision letter I received says that I quit my job. My coworkers mocked me for my sexual orientation. I made complaints to HR, but nothing was done. I was having mental breakdowns and missing work. Eventually, I had to leave for my own mental health. I did not voluntarily quit. I was forced out due to the constant harassment."
 ---
 ### currently unused ###
 template: ides_legal_services_help	
@@ -352,8 +374,8 @@ subquestion: |
   If you were **fired**, your employer has to show that you were fired for misconduct. If you did not do what the employer said you did, you can explain that. Or you can explain how what you did was not misconduct. To learn more, see ILAO's article about [getting unemployment benefits if you were fired](https://www.illinoislegalaid.org/node/32491).
   % endif
   
-  ${ collapse_template(request_example_help) }  
-
+  ${ collapse_template(example_help) }  
+  
   **Note:** The form has room for about **1,500 characters** including spaces.
 fields:
   - raw html: |
@@ -496,7 +518,7 @@ question: |
 subquestion: |
   A transcript is a written copy of everything that was said at your referee hearing. The record includes the transcript and other documents from your case.
   
-  You can ask IDES for these documents. They can help you write an additional statement explaining why you should receive benefits.
+  You can ask IDES for these documents. They can help you write an additional statement explaining why you should receive benefits. There may be a fee if IDES sends you copies of the transcript and record. You can also make an appointment to go in person to review their files at 115 N. LaSalle, in Chicago, or at another IDES facility.
 
   **Important:** You will have only 10 days from when the transcript is mailed to you to send **an additional written statement** to the Board of Review and to your employer.
 fields: 
@@ -715,12 +737,14 @@ content: |
 ---
 ###################### ATTACHMENTS ##########################
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
+  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal, transcript_request, file_request, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
 ---
 objects:
   - instructions: ALDocument.using(title="Instructions", filename="instructions.pdf", enabled=True, has_addendum=False)
   - notice_of_appeal: ALDocument.using(title=form_name, filename="notice_of_appeal.pdf", enabled=True, has_addendum=True)
   - cover_letter: ALDocument.using(title="Cover letter", filename="cover_letter.pdf", enabled=True, has_addendum=False)
+  - transcript_request: ALDocument.using(title="Transcript Request", filename="transcript_request.pdf", has_addendum=True)
+  - file_request: ALDocument.using(title="Review File Request", filename="file_request.pdf", has_addendum=True)
 ---
 template: appeal_reason_formatted_template
 content: |
@@ -743,6 +767,14 @@ code: |
   notice_of_appeal.overflow_fields["appeal_reason_formatted"].overflow_trigger = 800
 
   notice_of_appeal.overflow_fields.gathered = True
+---
+code: |
+  transcript_request.enabled = False
+  file_request.enabled = False
+  if request_transcript:
+    transcript_request.enabled = True
+    file_request.enabled = True
+
 ---
 attachment:
   variable name: notice_of_appeal.addendum
@@ -802,3 +834,36 @@ attachment:
       - "service_address": ${ employer.address.on_one_line() }
       - "service_date": ${ delivery_date.format("MM/dd/yyyy") }
       - "servedby": ${ "certified" if delivery_method == "certify" else "delivery" if delivery_method == "delivery" else '' }
+---
+attachment:
+  - name: transcript_request
+    variable name: transcript_request[i]
+    filename: transcript_request
+    pdf template file: transcript_request.pdf
+    skip undefined: True
+    editable: False
+    fields:
+      - "date": ${ today().format("MMMM d, yyyy") }
+      - "claimant_id": ${ int(users[0].id_or_ssn) }
+      - "bor_docket_number": ${ docket_number }
+      - "claimant_cb": ${ True }
+      - "appellant_cb": ${ True }
+      - "referee_name": ${ hearing_judge if hearing_judge != '' else '' }
+      - "hearing_time": ${ format_time(hearing_time, format='h:mm a') if hearing_time != '' else '' }
+      - "hearing_date": ${ hearing_date }
+      - "user_name": ${ users[0].name_full() }
+---
+attachment:
+  - name: file_request
+    variable name: file_request[i]
+    filename: file_request
+    pdf template file: file_request.pdf
+    skip undefined: True
+    editable: False
+    fields:
+      - "date": ${ today().format("MMMM d, yyyy") }
+      - "claimant_id": ${ int(users[0].id_or_ssn) }
+      - "bor_docket_number": ${ docket_number }
+      - "claimant_cb": ${ True }
+      - "user_name": ${ users[0].name_full() }
+      - "user_name_2": ${ users[0].name_full() }
