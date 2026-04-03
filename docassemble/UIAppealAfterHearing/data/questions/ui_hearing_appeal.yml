@@ -522,7 +522,9 @@ subquestion: |
 
   **Important:** You will have only 10 days from when the transcript is mailed to you to send **an additional written statement** to the Board of Review and to your employer.
 fields: 
-  - Ask IDES for a transcript and copy of the record?: request_transcript
+  - Ask IDES for a transcript?: request_transcript
+    datatype: yesnoradio
+  - Ask IDES for a copy of the record?: request_record
     datatype: yesnoradio
 ---
 id: appeal date
@@ -737,14 +739,17 @@ content: |
 ---
 ###################### ATTACHMENTS ##########################
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, notice_of_appeal, transcript_request, file_request, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
+  - al_user_bundle: ALDocumentBundle.using(elements=[instructions, appeal_bundle, cover_letter], filename="ui_hearing_appeal_packet.pdf", title="All forms", enabled=True)
 ---
 objects:
   - instructions: ALDocument.using(title="Instructions", filename="instructions.pdf", enabled=True, has_addendum=False)
   - notice_of_appeal: ALDocument.using(title=form_name, filename="notice_of_appeal.pdf", enabled=True, has_addendum=True)
   - cover_letter: ALDocument.using(title="Cover letter", filename="cover_letter.pdf", enabled=True, has_addendum=False)
-  - transcript_request: ALDocument.using(title="Transcript Request", filename="transcript_request.pdf", has_addendum=True)
-  - file_request: ALDocument.using(title="Review File Request", filename="file_request.pdf", has_addendum=True)
+  - transcript_request: ALDocument.using(title="Transcript Request", filename="transcript_request.pdf", has_addendum=False)
+  - file_request: ALDocument.using(title="Review File Request", filename="file_request.pdf", has_addendum=False)
+---
+objects:
+  - appeal_bundle: ALDocumentBundle.using(elements=[notice_of_appeal, transcript_request, file_request], filename="notice_of_appeal.pdf", title=form_name, enabled=True)
 ---
 template: appeal_reason_formatted_template
 content: |
@@ -773,6 +778,7 @@ code: |
   file_request.enabled = False
   if request_transcript:
     transcript_request.enabled = True
+  if request_record:
     file_request.enabled = True
 
 ---
@@ -816,7 +822,7 @@ attachment:
       - "other": ${ attachments.there_are_any }
       - "other_explain": |
           % if attachments.there_are_any:
-            % if len(attachments) > 1:
+            % if len(attachments) > 2:
             Please see attached list of documents.
             % else:
             ${ attachments }
@@ -845,7 +851,7 @@ attachment:
     fields:
       - "date": ${ today().format("MMMM d, yyyy") }
       - "claimant_id": ${ int(users[0].id_or_ssn) }
-      - "bor_docket_number": ${ docket_number }
+      - "bor_docket_number": ${ "" }
       - "claimant_cb": ${ True }
       - "appellant_cb": ${ True }
       - "referee_name": ${ hearing_judge if hearing_judge != '' else '' }
@@ -863,7 +869,7 @@ attachment:
     fields:
       - "date": ${ today().format("MMMM d, yyyy") }
       - "claimant_id": ${ int(users[0].id_or_ssn) }
-      - "bor_docket_number": ${ docket_number }
+      - "bor_docket_number": ${ "" }
       - "claimant_cb": ${ True }
       - "user_name": ${ users[0].name_full() }
       - "user_name_2": ${ users[0].name_full() }

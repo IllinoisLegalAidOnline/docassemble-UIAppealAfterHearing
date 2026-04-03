@@ -94,6 +94,10 @@ review:
     button: |
       **Ask IDES for a transcript?**
       ${ word(yesno(request_transcript)) }
+  - Edit: request_record
+    button: |
+      **Ask IDES for a copy of the record?**
+      ${ word(yesno(request_record)) }
   - Edit: appeal_date
     button: |
       **Date you will send or deliver your appeal:**
@@ -251,6 +255,10 @@ review:
     button: |
       **Ask IDES for a transcript?**
       ${ word(yesno(request_transcript)) }
+  - Edit: request_record
+    button: |
+      **Ask IDES for a copy of the record?**
+      ${ word(yesno(request_record)) }
   - Edit: appeal_date
     button: |
       **Date you will send or deliver your appeal:**
