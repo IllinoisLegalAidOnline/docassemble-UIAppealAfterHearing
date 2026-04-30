@@ -158,7 +158,7 @@ question: |
 subquestion: |
   If you are denied unemployment benefits, you have 3 opportunities to appeal:
 
-  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask IDES to review a claim adjudicator's decision. The Request for Reconsideration must be filed **within 30 days** after the claim adjudicator determination is delivered. You will have a hearing with an IDES referee who will make a decision.
+  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask IDES to review a claim adjudicator's decision. The Request for Reconsideration must be filed **within 30 days** after the claim adjudicator determination is delivered. You will have a hearing with an IDES referee who will make a decision. **To use this Easy Form, you must have already had a referee hearing and received a letter with their decision.**
   
   2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. The appeal must be filed **within 30 days** after the Referee's Decision is delivered. **This Easy Form makes a Notice of Appeal to the Board of Review.**
   
@@ -353,7 +353,7 @@ content: |
 
   * "The decision letter I received says that I quit my job. I was working full-time when I started the job, but my employer took away a lot of my shifts and gave them to another employee after I complained to HR about discrimination."
 
-  * "The decision letter I received says that I quit my job. My coworkers mocked me for my sexual orientation. I made complaints to HR, but nothing was done. I was having mental breakdowns and missing work. Eventually, I had to leave for my own mental health. I did not voluntarily quit. I was forced out due to the constant harassment."
+  * "The decision letter I received says that I quit my job. My coworkers mocked me for my sexual orientation. I made complaints to HR, but nothing was done. The situation caused a great deal of mental stress. I began missing work and eventually I had to leave for my own mental health. I did not voluntarily quit. I was forced out due to the constant harassment."
 ---
 ### currently unused ###
 template: ides_legal_services_help	
@@ -645,7 +645,7 @@ fields:
     maxlength: 30
     required: False
     help: |
-      Appartment, floor, or unit number.
+      Apartment, floor, or unit number
   - City: users[0].address.city
   - State: users[0].address.state
     code: |
