@@ -137,9 +137,9 @@ subquestion: |
   To use this program you will need:
 
   * A decision letter from an IDES hearing referee, and
-  * Your Claimant ID (printed on the letter) or the last 4 digits of your Social Security Number.
+  * Your Claimant ID (printed on the letter) or the last four digits of your Social Security Number.
   
-  Set aside 5 to 10 minutes to finish this program. You can log in and save your work to continue later. 
+  Set aside 10 to 15 minutes to finish this program. You can log in and save your work to continue later. 
  
   ${ collapse_template(help_example) }  
 
@@ -666,11 +666,11 @@ id: user last 4 ssn
 question: |
   Claimant ID
 subquestion: |
-  Enter your Claimant ID or the last 4 digits of your Social Security Number. This is used by IDES to identify your UI benefits claim.
+  Enter your Claimant ID or the last four digits of your Social Security Number. This is used by IDES to identify your UI benefits claim.
 
   ${ collapse_template(locating_claimant_id_example) }  
 fields:
-  - Claimant ID or last 4 digits of SSN: users[0].id_or_ssn
+  - Claimant ID or last four digits of SSN: users[0].id_or_ssn
     datatype: number
     minlength: 4
     maxlength: 15
