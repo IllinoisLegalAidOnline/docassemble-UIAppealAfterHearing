@@ -158,9 +158,9 @@ question: |
 subquestion: |
   If you are denied unemployment benefits, you have 3 opportunities to appeal:
 
-  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask IDES to review a claim adjudicator's decision. The Request for Reconsideration must be filed **within 30 days** after the claim adjudicator determination is delivered. You will have a hearing with an IDES referee who will make a decision. **To use this Easy Form, you must have already had a referee hearing and received a letter with their decision.**
+  1. File a [**Request for Reconsideration**](https://www.illinoislegalaid.org/legal-information/unemployment-benefits-request-hearing) to ask IDES to review a claim adjudicator's decision. The Request for Reconsideration must be filed **within 30 days** after the claim adjudicator determination is delivered. You will have a hearing with an IDES referee who will make a decision.
   
-  2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. The appeal must be filed **within 30 days** after the Referee's Decision is delivered. **This Easy Form makes a Notice of Appeal to the Board of Review.**
+  2. After your hearing, if you don't agree with the referee's decision, file an appeal with the Board of Review. The appeal must be filed **within 30 days** after the Referee's Decision is delivered. **This Easy Form makes a Notice of Appeal to the Board of Review.** To use it, you must have already had a referee hearing and received a letter with their decision.
   
   3. Finally, if you don't agree with the Board of Review's decision, file an Administrative Review Action (ARA) in Circuit Court. The ARA must be filed **within 35 days** of the Board of Review's decision.
 
@@ -753,14 +753,14 @@ objects:
 ---
 template: appeal_reason_formatted_template
 content: |
+  % if attended_hearing == False:
+  ${ "I did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation + "\n"} 
+  % endif
   ${ "I disagree with the decision for the following reasons: " + appeal_reason }
   % if date_difference(decision_date, today()).days >= 30:
     % if late_reason:
     ${ "\nMy appeal is late because: " + late_reason }
     % endif
-  % endif
-  % if attended_hearing == False:
-  ${ "\nI did not attend the " + hearing_date.format("MMMM dd, yyyy") + " hearing because: " + missed_hearing_explanation } 
   % endif
 ---
 reconsider: True
